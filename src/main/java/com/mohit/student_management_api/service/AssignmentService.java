@@ -9,6 +9,9 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,6 +24,7 @@ import com.mohit.student_management_api.entity.ClassRoom;
 import com.mohit.student_management_api.entity.Course;
 import com.mohit.student_management_api.entity.Teacher;
 import com.mohit.student_management_api.exception.ResourceNotFoundException;
+import com.mohit.student_management_api.mapper.AssignmentUploadMapper;
 import com.mohit.student_management_api.repository.AssignmentRepository;
 import com.mohit.student_management_api.repository.AssignmentUploadsRepository;
 import com.mohit.student_management_api.repository.ClassRoomRepository;
@@ -41,6 +45,7 @@ public class AssignmentService {
 	private final TeacherRepository teacherRepository;
 	private final AssignmentUploadsRepository assignmentUploadsRepository;
 	private final FileValidationService fileValidationService;
+	private final AssignmentUploadMapper assignmentUploadMapper;
 
 	public void issueAssignment(AssignmentRequestDto assignmentRequestDto) {
 		String courseId=assignmentRequestDto.getCourseId();
@@ -97,17 +102,13 @@ public class AssignmentService {
 						.build()).toList();
 	}
 
-	public List<AssignmentUploadResponseDto> getUploadedAssignment(int id) {
+	public Page<AssignmentUploadResponseDto> getUploadedAssignment(int id, int page,int size) {
 		log.info("fetching uploaded assignments for assignmentIssuedId={}",id);
-		List<AssignmentUploaded> assignmentUploadeds=assignmentUploadsRepository.findByAssignmentId(id);
+		Pageable pageable=PageRequest.of(page, size);
+		Page<AssignmentUploaded> assignmentUploadeds=assignmentUploadsRepository.findByAssignmentId(id,pageable);
 		log.info("Fetched {} uploaded assignments for assignmentIssuedId={}",id);
-		return assignmentUploadeds.stream()
-				.map(assignmentUploaded->AssignmentUploadResponseDto.builder()
-						.assignmentStatus(assignmentUploaded.getAssignmentStatus())
-						.assignmentUploadPath(assignmentUploaded.getAssignmentUploadFilePath())
-						.studentName(assignmentUploaded.getStudent().getName())
-						.rollNo(assignmentUploaded.getStudent().getRollNo())
-						.build()).toList();
+		return assignmentUploadeds
+				.map(assignmentUploadMapper::toAssignmentUploadResponseDto);
 	}
 
 }

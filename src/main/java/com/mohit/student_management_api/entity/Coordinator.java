@@ -52,6 +52,6 @@ public class Coordinator {
 	@OneToMany(mappedBy="coordinator" ,fetch =FetchType.LAZY)
 	List<Student> students=new ArrayList<>();	
 	
-	@OneToMany(mappedBy="coordinator")
+	@OneToMany(mappedBy="coordinator",fetch = FetchType.EAGER)
 	List<ClassRoom> classrooms=new ArrayList<>();
 }

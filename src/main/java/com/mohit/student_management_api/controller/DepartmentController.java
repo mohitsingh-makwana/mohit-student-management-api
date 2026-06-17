@@ -1,9 +1,11 @@
 package com.mohit.student_management_api.controller;
 
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mohit.student_management_api.dto.ClassRoomResponseDto;
@@ -53,16 +56,20 @@ public class DepartmentController {
 	}
 	
 	@GetMapping("/{id}/students")
-	public ResponseEntity<List<StudentResponseDto>> getStudentsByDepartmentId(@PathVariable @Positive(message = "Please enter a valid id") int id) {
+	public ResponseEntity<Page<StudentResponseDto>> getStudentsByDepartmentId(@PathVariable @Positive(message = "Please enter a valid id") int id,
+																				@RequestParam(defaultValue = "0") int page,
+																				@RequestParam(defaultValue = "15") int size ) {
 		log.info("Request received to get Students for departmentId={}",id);
-		List<StudentResponseDto> list=departmentService.getStudentsByDepartmentId(id);
+		Page<StudentResponseDto> students=departmentService.getStudentsByDepartmentId(id,page,size);
 		
-		return ResponseEntity.ok(list);
+		return ResponseEntity.ok(students);
 	}
 	@GetMapping("/{id}/classrooms")
-	public ResponseEntity<List<ClassRoomResponseDto>> getClassRoomsByDepartmentId(@PathVariable @Positive(message = "Please enter a valid id") int id) {
+	public ResponseEntity<Page<ClassRoomResponseDto>> getClassRoomsByDepartmentId(@PathVariable @Positive(message = "Please enter a valid id") int id,
+																					@RequestParam(defaultValue = "0")int page,
+																					@RequestParam(defaultValue = "10")int size) {
 		log.info("Request received to get Classrooms for departmentId={}",id);
-		List<ClassRoomResponseDto> list=departmentService.getClassrooms(id);
+		Page<ClassRoomResponseDto> list=departmentService.getClassrooms(id,page,size);
 		return ResponseEntity.ok(list);
 	}
 	

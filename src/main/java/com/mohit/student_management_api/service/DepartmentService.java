@@ -1,8 +1,14 @@
 package com.mohit.student_management_api.service;
 
-import java.util.List;
-import java.util.function.Supplier;
 
+import java.util.List;
+
+
+
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.mohit.student_management_api.dto.ClassRoomResponseDto;
@@ -18,7 +24,11 @@ import com.mohit.student_management_api.entity.Department;
 import com.mohit.student_management_api.entity.Student;
 import com.mohit.student_management_api.entity.Teacher;
 import com.mohit.student_management_api.exception.ResourceNotFoundException;
+import com.mohit.student_management_api.mapper.ClassroomMapper;
+import com.mohit.student_management_api.mapper.StudentMapper;
+import com.mohit.student_management_api.repository.ClassRoomRepository;
 import com.mohit.student_management_api.repository.DepartmentRepository;
+import com.mohit.student_management_api.repository.StudentRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +39,10 @@ import lombok.extern.slf4j.Slf4j;
 public class DepartmentService {
 	
 	private final DepartmentRepository departmentRepository;
-	
+	private final StudentMapper studentMapper;
+	private final ClassroomMapper classroomMapper;
+	private final StudentRepository studentRepository;
+	private final ClassRoomRepository classRoomRepository;
 	
 	public Department getDepartmentObject(int id) {
 		Department department=departmentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Department Not found with id="+id));
@@ -57,38 +70,25 @@ public class DepartmentService {
 	return name;
 	}
 
-	public List<StudentResponseDto> getStudentsByDepartmentId(int id) {
-		Department department=getDepartmentObject(id);
-		log.info("Fetching  Students for departmentId={}",id);
+	public Page<StudentResponseDto> getStudentsByDepartmentId(int id, int page, int size) {
+			log.info("Fetching  Students for departmentId={}",id);
+		Pageable pageable=PageRequest.of(page, size);
+			
+		Page<Student> students=studentRepository.getStudentsByDepartmentId(id,pageable);
+		log.info("Fetched {} Students for departmentId={}",students.getSize(),id );
 		
-		List<Student> students=department.getStudents();
-		log.info("Fetched {} Students for departmentId={}",students.size(),id );
-		
-		return students.stream()
-				.map(student->StudentResponseDto.builder()
-						.rollNo(student.getRollNo())
-						.name(student.getName())
-						.email(student.getEmail())
-						.address(student.getAddress())
-						.contactNo(student.getContactNo())
-						.attendance(student.getAttendance())
-						.build()).toList();
+		return students.map(studentMapper::toStudentResponseDto);
 	}
 
-	public List<ClassRoomResponseDto> getClassrooms(int id) {
-		Department department=getDepartmentObject(id);
+	public Page<ClassRoomResponseDto> getClassrooms(int id, int page, int size) {
+	
 		log.info("Fetching  Classrooms for departmentId={}",id);
 		
-		List<ClassRoom> classRooms=department.getClassrooms();
-		log.info("Fetched {} classrooms for departmentId={}",classRooms.size(),id );
+		Pageable pageable=PageRequest.of(page, size);
+		Page<ClassRoom> classRooms=classRoomRepository.findClassRoomsByDepartmentId(id,pageable);
+		log.info("Fetched {} classrooms for departmentId={}",classRooms.getSize(),id);
 		
-		return classRooms.stream()
-				.map(classroom->ClassRoomResponseDto.builder()
-						.name(classroom.getName())
-						.departmentName(classroom.getDepartment().getName())
-						.CoordinatorName(classroom.getCoordinator().getName())
-						.build()).toList();
-				
+		return classRooms.map(classroomMapper::toClassRoomResponseDto);
 	}
 
 	public List<TeacherResponseDto> getTeachers(int id) {

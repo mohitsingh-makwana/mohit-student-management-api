@@ -48,7 +48,7 @@ public class Department {
 	@OneToMany(mappedBy="department",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
 	List<Teacher> teachers=new ArrayList<>();
 	
-	@OneToMany(mappedBy="department",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+	@OneToMany(mappedBy="department",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
 	List<ClassRoom> classrooms=new ArrayList<>();
 	
 	

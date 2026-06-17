@@ -2,6 +2,9 @@ package com.mohit.student_management_api.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.mohit.student_management_api.dto.AssignmentResponseDto;
@@ -20,8 +23,9 @@ import com.mohit.student_management_api.entity.Department;
 import com.mohit.student_management_api.entity.NotesProvided;
 import com.mohit.student_management_api.entity.Notice;
 import com.mohit.student_management_api.entity.Student;
-import com.mohit.student_management_api.entity.Teacher;
+
 import com.mohit.student_management_api.exception.ResourceNotFoundException;
+import com.mohit.student_management_api.mapper.StudentMapper;
 import com.mohit.student_management_api.repository.ClassRoomRepository;
 import com.mohit.student_management_api.repository.CoordinatorRepository;
 import com.mohit.student_management_api.repository.DepartmentRepository;
@@ -38,7 +42,7 @@ public class ClassRoomService {
 	private final ClassRoomRepository classRoomRepository;
 	private final DepartmentRepository departmentRepository;
 	private final CoordinatorRepository coordinatorRepository;
-
+	private final StudentMapper studentMapper;
     
 	
 	public ClassRoom getClassRoomObject(int id) {
@@ -73,21 +77,14 @@ public class ClassRoomService {
 		classRoomRepository.delete(classRoom);
 	}
 
-	public List<StudentResponseDto> getStudents(int id) {
-		ClassRoom classRoom=getClassRoomObject(id);
+	public Page<StudentResponseDto> getStudents(int id, int page, int size) {
+	
 		log.info("Fetching Students for classroomId={}",id);
-		List<Student> students=classRoom.getStudents();
-		log.info("Fetched {} students classroomId={}",students.size(), id);
+		Pageable pageable=PageRequest.of(page, size);
+		Page<Student> students=classRoomRepository.findStudentsById(id,pageable);
+		log.info("Fetched {} students classroomId={}",students.getContent(), id);
 		
-		return students.stream()
-				.map(student->StudentResponseDto.builder()
-						.rollNo(student.getRollNo())
-						.name(student.getName())
-						.email(student.getEmail())
-						.contactNo(student.getContactNo())
-						.address(student.getAddress())
-						.attendance(student.getAttendance())
-						.build()).toList();
+		return students.map(studentMapper::toStudentResponseDto);
 		}
 
 	public List<NoticeResponseDto> getNotices(int id) {

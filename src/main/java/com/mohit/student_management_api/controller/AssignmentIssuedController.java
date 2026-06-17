@@ -3,6 +3,7 @@ package com.mohit.student_management_api.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,10 +54,11 @@ public class AssignmentIssuedController {
 	}
 	
 	@GetMapping("/{id}/assignmentUploaded")
-	public ResponseEntity<List<AssignmentUploadResponseDto>> getUploadedAssignmentByAssignmentIssuedId(@PathVariable @Positive(message = "Please enter a valid id")int id){
-		
+	public ResponseEntity<Page<AssignmentUploadResponseDto>> getUploadedAssignmentByAssignmentIssuedId(@PathVariable @Positive(message = "Please enter a valid id")int id,
+																									   @RequestParam(defaultValue = "0")int page,
+																									   @RequestParam(defaultValue = "10")int size){
 		log.info("Recieved request to get all uploaded assignment for assignmentIssuedId={}",id);
-	List<AssignmentUploadResponseDto> assignmentUploadResponseDtos=	assignmentService.getUploadedAssignment(id);
+	Page<AssignmentUploadResponseDto> assignmentUploadResponseDtos=	assignmentService.getUploadedAssignment(id,page,size);
 		return ResponseEntity.ok(assignmentUploadResponseDtos);
 	}
 }
