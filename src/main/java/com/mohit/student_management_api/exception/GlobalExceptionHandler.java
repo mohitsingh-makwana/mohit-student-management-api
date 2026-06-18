@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -44,6 +45,18 @@ public class GlobalExceptionHandler {
 								);
 	}
 	
+	
+	@ExceptionHandler(UserNotFoundException.class)
+	public ResponseEntity<ErrorResponseDto > handleUserNotFound(UserNotFoundException ex){
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(
+					ErrorResponseDto.builder()
+					.localDateTime(LocalDateTime.now())
+					.status(HttpStatus.NOT_FOUND.value())
+					.message(ex.getMessage())
+					.build());
+	}
+	
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<ErrorResponseDto> handleIllegalArgumentException(IllegalArgumentException ex){
 		
@@ -68,6 +81,20 @@ public class GlobalExceptionHandler {
 						.build()
 					);
 	}
+	
+	
+	
+	@ExceptionHandler(BadCredentialsException.class)
+	public ResponseEntity<ErrorResponseDto> handleBadCredentials(BadCredentialsException ex){
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+								.body(
+									ErrorResponseDto.builder()
+									.localDateTime(LocalDateTime.now())
+									.status(HttpStatus.UNAUTHORIZED.value())
+									.message(ex.getMessage())
+									.build());
+	}
+	
 	
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponseDto> handleRemainingException(Exception ex){

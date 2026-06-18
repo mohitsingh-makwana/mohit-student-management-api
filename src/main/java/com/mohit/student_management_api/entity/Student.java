@@ -49,6 +49,9 @@ public class Student {
 	@Column(unique = true,nullable = false)
 	String email;
 	
+	@Column(nullable = false)
+	String password;
+	
 	@Column(unique = true)
 	String contactNo;
 	

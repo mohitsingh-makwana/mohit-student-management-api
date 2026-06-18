@@ -42,6 +42,9 @@ public class Teacher {
 	@Column(unique = true)
 	String email;
 	
+	@Column(nullable = false)
+	String password;
+	
 	@Column(unique = true)
 	String contactNo;
 	

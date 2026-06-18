@@ -1,5 +1,6 @@
 package com.mohit.student_management_api.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.mohit.student_management_api.dto.CoordinatorRequestDto;
@@ -22,6 +23,8 @@ public class CoordinatorService {
 	
 	private final DepartmentRepository departmentRepository;
 	
+	private final PasswordEncoder passwordEncoder;
+	
 	
 	public Coordinator getCoordinatorObject(int id) {
 		return coordinatorRepository.findById(id)
@@ -35,9 +38,12 @@ public class CoordinatorService {
 		Coordinator coordinator=Coordinator.builder()
 				.name(coordinatorRequestDto.getName())
 				.email(coordinatorRequestDto.getEmail())
+				.password(passwordEncoder.encode(coordinatorRequestDto.getPassword()))
 				.contactNo(coordinatorRequestDto.getContactNo())
 				.department(department)
 				.build();
+		
+		log.info("password encoded as {}",passwordEncoder.encode(coordinatorRequestDto.getPassword()));
 		log.info("Creating Coordinator for departmentId={}",coordinatorRequestDto.getDepartmentId());
 		
 		 coordinatorRepository.save(coordinator);

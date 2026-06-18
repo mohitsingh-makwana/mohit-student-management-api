@@ -2,6 +2,7 @@ package com.mohit.student_management_api.service;
 
 import java.util.List;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.mohit.student_management_api.dto.CoordinatorResponseDto;
@@ -38,6 +39,8 @@ public class StudentService {
 	
 	private final ClassRoomRepository classRoomRepository;
 	
+	private final PasswordEncoder passwordEncoder;
+	
 	
 	public Student getStudentObject(int id) {
 		return studentRepository.findById(id)
@@ -59,6 +62,7 @@ public class StudentService {
 				.rollNo(studentRequestDto.getRollNo())
 				.name(studentRequestDto.getName())
 				.email(studentRequestDto.getEmail())
+				.password(passwordEncoder.encode(studentRequestDto.getRollNo()+"@123"))
 				.contactNo(studentRequestDto.getContactNo())
 				.address(studentRequestDto.getAddress())
 				.attendance(studentRequestDto.getAttendance())

@@ -11,6 +11,8 @@ import com.mohit.student_management_api.entity.Student;
 public interface StudentRepository extends JpaRepository<Student, Integer> {
 
 	Page<Student> getStudentsByDepartmentId(int departmentId, Pageable pageable);
+
+	Student findByEmail(String email);
 	
 
 }

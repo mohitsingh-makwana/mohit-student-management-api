@@ -1,6 +1,7 @@
 package com.mohit.student_management_api.service;
 
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.mohit.student_management_api.dto.TeacherRequestDto;
@@ -20,6 +21,7 @@ public class TeacherService {
 	
 	private final TeacherRepository teacherRepository;
 	private final DepartmentRepository departmentRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	public void addTeacher(TeacherRequestDto teacherRequestDto) {
 		
@@ -29,6 +31,7 @@ public class TeacherService {
 				.id(teacherRequestDto.getId())
 				.name(teacherRequestDto.getName())
 				.email(teacherRequestDto.getEmail())
+				.password(passwordEncoder.encode(teacherRequestDto.getId()+"@123"))
 				.contactNo(teacherRequestDto.getContactNo())
 				.department(department)
 				.build();

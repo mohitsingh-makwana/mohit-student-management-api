@@ -26,6 +26,10 @@ public class CoordinatorRequestDto {
 	@Email(message="Please enter valid email")
 	String email;
 	
+	@NotBlank(message = "Password required")
+	@Size(min = 6,message = "Weak Password")
+	String password;
+	
 	@Size(min=10,max=10)
 	@NotBlank(message = "Contact No. is required")
 	String contactNo;
