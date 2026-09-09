@@ -79,35 +79,15 @@ Along with CRUD operations, the project implements real-world backend concepts s
 # 🏗️ Architecture
 
 The application follows a **Layered Architecture** to maintain separation of concerns and improve maintainability.
-                         Client
-                           |
-                           v
-                    +--------------+
-                    |  Controller  |
-                    +--------------+
-                           |
-                           v
-                    +--------------+
-                    |    Service   |
-                    +--------------+
-                           |
-                           v
-                    +--------------+
-                    |  Repository  |
-                    +--------------+
-                           |
-                           v
-                    +--------------+
-                    |    MySQL     |
-                    +--------------+
-             Supporting Components
-             ---------------------
-                    DTO
-                    Mapper
-                    Security
-                    Validation
-                    Exception Handling
-                    Logging
+                        Client ->  Controller -> Service -> Repository -> MySQL
+                    
+Supporting Components
+ DTO
+ Mapper
+ Security
+ Validation
+ Exception Handling
+ Logging
 Main Layers
 
 Controller Layer
